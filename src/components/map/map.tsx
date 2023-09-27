@@ -1,22 +1,21 @@
 import mapboxgl from "mapbox-gl";
-import { MAPBOX_TOKEN } from "../../constants";
 
+import { MAPBOX_TOKEN } from "../../constants";
+import { useDistanceMarker, useInitializeMap, useRenderCurrentLocation } from "./hooks";
 import styles from "./map.module.css";
-import { useEffect } from "react";
 
 mapboxgl.accessToken = MAPBOX_TOKEN;
 
+const MAP_CONTAINER_ID: string = "map";
+
 export const Map = () => {
-  useEffect(() => {
-    const map = new mapboxgl.Map({
-      container: "map",
-      style: "mapbox://styles/mapbox/streets-v12",
-      center: [-74.5, 40],
-      zoom: 9,
-    });
+  const { map, position } = useInitializeMap(MAP_CONTAINER_ID);
 
-    return () => map.remove();
-  }, []);
+  useRenderCurrentLocation({ map, position });
 
-  return <div id="map" className={styles.mapContainer} />;
+  const distance = useDistanceMarker({ map, position });
+
+  console.log({ distance });
+
+  return <div id={MAP_CONTAINER_ID} className={styles.mapContainer} />;
 };
